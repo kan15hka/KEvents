@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:kevents/common/widgets/button_box.dart';
 import 'package:kevents/common/widgets/frosted_glass_box.dart';
 
-void deleteRowDialog(
-    {required BuildContext context,
-    required String mkid,
-    required Function() onTapYes}) {
+void deleteRowDialog({
+  required BuildContext context,
+  required String kid,
+  required Function() onTapYes,
+}) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -35,7 +36,7 @@ void deleteRowDialog(
                   ),
                 ],
               ),
-              Text("Do you really want remove participant with mkid:$mkid?"),
+              Text("Do you really want remove participant with K! ID: $kid?"),
               Row(
                 children: [
                   const Spacer(),

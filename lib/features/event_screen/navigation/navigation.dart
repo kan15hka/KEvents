@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kevents/common/widgets/background_widget.dart';
 import 'package:kevents/common/widgets/frosted_glass_box.dart';
-import 'package:kevents/common/constants.dart';
-import 'package:kevents/features/event_screen/search/send_file_button.dart';
 import 'package:kevents/models/menu.dart';
 import 'package:kevents/features/event_screen/navigation/btm_nav_item.dart';
 import 'package:kevents/features/event_screen/participant/add_participant_page.dart';
-import 'package:kevents/features/home_screen/home_screen.dart';
 import 'package:kevents/features/event_screen/search/view_search_participant_page.dart';
 import 'package:kevents/common/utils/rive_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -60,12 +57,13 @@ class _NavigationWidgetState extends State<NavigationWidget>
     _pages = [
       {
         'page': AddParticipantPage(
+          eventName: widget.event,
           eventType: eventType!,
         ),
         'title': 'Add ${eventType!.toString()} Participant',
       },
       {
-        'page': ViewSearchParticipantPage(),
+        'page': const ViewSearchParticipantPage(),
         'title': 'View or Search Participant',
       },
     ];
@@ -90,6 +88,7 @@ class _NavigationWidgetState extends State<NavigationWidget>
   Widget build(BuildContext context) {
     bool keyboardIsOpened = MediaQuery.of(context).viewInsets.bottom != 0.0;
     return Scaffold(
+      // resizeToAvoidBottomInset: false,
       backgroundColor: const Color.fromARGB(255, 24, 20, 57),
       //backgorund widget
       body: BackgroundWidget(
@@ -170,7 +169,7 @@ class _NavigationWidgetState extends State<NavigationWidget>
 
                       //Body
                       Expanded(
-                        child: Container(
+                        child: SizedBox(
                           width: MediaQuery.of(context).size.width,
                           child: _pages[selectedIndex]["page"],
                         ),

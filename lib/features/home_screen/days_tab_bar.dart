@@ -1,8 +1,9 @@
-import 'dart:io';
+// import 'dart:io';
 
-import 'package:csv/csv.dart';
+// import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:kevents/common/utils/utils.dart';
+// import 'package:path_provider/path_provider.dart';
 import 'package:kevents/common/widgets/frosted_glass_event_box.dart';
 import 'package:kevents/models/events.dart';
 import 'package:kevents/features/home_screen/day_tab.dart';
@@ -36,49 +37,23 @@ class _DaysTabBarState extends State<DaysTabBar> with TickerProviderStateMixin {
   //File
   String? path;
   String? _filePath; //Selected File Path
-  String? _folderPath;
+  // String? _folderPath;
   bool isFileSelected = false; //File Selected or Not
 
   Future<void> _loadPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     prefs.setBool('fileSelected', true);
-    prefs.setString('filePath', _filePath!);
     prefs.setString('eventType', eventType!);
-    print("DTB _load: " + prefs.getString('filePath').toString());
+    setState(() {
+      _filePath = prefs.getString('filePath');
+      isFileSelected = prefs.getBool('fileSelected')!;
+    });
   }
 
   Future<void> createFolderAndCSVFile(String event) async {
     try {
-      // Get the internal storage directory
-      Directory? appDocDir = await getApplicationCacheDirectory();
-      // Create a new folder in the internal storage
-      Directory newFolder = Directory('${appDocDir.path}/KEvents');
-      // Check if the folder already exists
-      if (!(await newFolder.exists())) {
-        await newFolder.create(recursive: true);
-        print('Folder created: ${newFolder.path}');
-      } else {
-        print('Folder already exists: ${newFolder.path}');
-      }
-      // Create a new CSV file inside the folder
-      File csvFile = File('${newFolder.path}/${event}.csv');
-      // Check if the file already exists
-      if (!(await csvFile.exists())) {
-        csvFile.createSync();
-        String csvData = const ListToCsvConverter().convert(dummydata);
-        // Write the CSV string to the file
-        File file = File('${newFolder.path}/${event}.csv');
-        file.writeAsStringSync(csvData);
-
-        //Save file name to shared prefernce
-        print('Event .csv file created');
-      } else {
-        print('Event csv file exists already');
-      }
-      setState(() {
-        _filePath = '${newFolder.path}/${event}.csv';
-      });
+      createFile(eventName: event);
       await _loadPreferences();
     } catch (e) {
       print('Error creating folder and CSV file: $e');
@@ -89,7 +64,7 @@ class _DaysTabBarState extends State<DaysTabBar> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return (isProcessingFile)
         ? const Padding(
-            padding: const EdgeInsets.only(top: 20.0),
+            padding: EdgeInsets.only(top: 20.0),
             child: Text(
               "Processing File",
               style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.bold),

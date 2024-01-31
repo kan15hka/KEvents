@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:kevents/common/constants.dart';
 
 class FrostedGlassEventBox extends StatelessWidget {
   final double boxWidth;
@@ -25,7 +24,7 @@ class FrostedGlassEventBox extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.symmetric(
             vertical: verticalBoxMargin / 2,
-            horizontal: (MediaQuery.of(context).size.width! - boxWidth) / 2),
+            horizontal: (MediaQuery.of(context).size.width - boxWidth) / 2),
         width: boxWidth,
         color: Colors.transparent,
         child: Stack(
@@ -94,7 +93,7 @@ class FrostedGlassEventBox extends StatelessWidget {
                       ),
                       //Event Type
                       Text(
-                        "${boxType[0].toUpperCase() + boxType.substring(1)}",
+                        boxType[0].toUpperCase() + boxType.substring(1),
                         style: const TextStyle(fontSize: 11.0),
                       )
                     ],

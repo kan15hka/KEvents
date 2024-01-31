@@ -1,63 +1,70 @@
-import 'dart:io';
-import 'package:csv/csv.dart';
-import 'package:kevents/common/constants.dart';
+import 'package:flutter/material.dart';
+
+import 'package:kevents/common/utils/utils.dart';
 import 'package:kevents/features/event_screen/search/send_file_button.dart';
 import 'package:kevents/features/event_screen/search/participant_table.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:flutter/material.dart';
-
 class ViewSearchParticipantPage extends StatefulWidget {
+  const ViewSearchParticipantPage({super.key});
+
   @override
   State<ViewSearchParticipantPage> createState() =>
       _ViewSearchParticipantPageState();
 }
 
 class _ViewSearchParticipantPageState extends State<ViewSearchParticipantPage> {
-  bool isFileSelected = false;
-  String? path;
   TextEditingController searchController = TextEditingController();
+  String? filePath;
   List<List<dynamic>> csvData = [];
   List<List<dynamic>> searchData = [];
-  List<dynamic> csvHeader = [];
-  bool isMKIDPresent = true;
-  void _loadPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  List<dynamic> csvHeader = [
+    "TEAM NO",
+    "KID",
+    "NAME",
+    "EMAIL",
+    "PHONE",
+    "COLLEGE",
+    "IS CEGIAN"
+  ];
+  bool isKIDPresent = true;
 
-    setState(() {
-      isFileSelected = (prefs.getBool('fileSelected') ?? false);
-      path = prefs.getString('filePath');
-    });
-    csvData = await readDataFromCSV();
-    //Seperate Mkid array for earching
-    csvHeader = csvData[0];
-    searchData = csvData.sublist(1).toList();
+  void _loadCSV() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    filePath = prefs.getString('filePath');
+    readDataFromCSV().then(
+      (value) => setState(() {
+        csvData = value;
+        searchData = csvData.sublist(1);
+      }),
+    );
   }
 
-  //seperate mkid
+  //search participant by KID
   void searchParticipant(String searchtext) {
-    int index = csvData[0].indexOf("MKID");
+    int index = csvData[0].indexOf("KID");
     searchData.clear();
     List<List<dynamic>> data = csvData.sublist(1);
     int falseCount = 0;
-    data.forEach(
-      (csvRow) {
-        if (csvRow[index].toString().startsWith(searchtext)) {
-          setState(() {
-            searchData.add(csvRow);
-          });
-        } else {
-          setState(() {
-            falseCount++;
-          });
-        }
-      },
-    );
+    for (var csvRow in data) {
+      if (csvRow[index]
+          .toString()
+          .toLowerCase()
+          .startsWith(searchtext.toLowerCase())) {
+        setState(() {
+          searchData.add(csvRow);
+        });
+      } else {
+        setState(() {
+          falseCount++;
+        });
+      }
+    }
     setState(() {
       if (falseCount < data.length) {
-        isMKIDPresent = true;
+        isKIDPresent = true;
       } else {
-        isMKIDPresent = false;
+        isKIDPresent = false;
       }
     });
   }
@@ -65,9 +72,7 @@ class _ViewSearchParticipantPageState extends State<ViewSearchParticipantPage> {
   @override
   void initState() {
     super.initState();
-    _loadPreferences();
-    //print(path);
-    //seperateMKID();
+    _loadCSV();
   }
 
   @override
@@ -81,17 +86,18 @@ class _ViewSearchParticipantPageState extends State<ViewSearchParticipantPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            SendFileButton(filePath: path),
+            SendFileButton(filePath: filePath),
             SizedBox(
               height: 60.0,
               width: MediaQuery.of(context).size.width * 0.7,
               child: TextFormField(
-                  onChanged: ((value) {
-                    searchParticipant(value);
-                  }),
-                  style: const TextStyle(color: Colors.white, fontSize: 17.0),
-                  controller: searchController,
-                  decoration: textFieldInputDecoration),
+                onChanged: ((value) {
+                  searchParticipant(value);
+                }),
+                style: const TextStyle(color: Colors.white, fontSize: 17.0),
+                controller: searchController,
+                decoration: textFieldInputDecoration,
+              ),
             ),
           ],
         ),
@@ -104,30 +110,13 @@ class _ViewSearchParticipantPageState extends State<ViewSearchParticipantPage> {
           csvData: csvData,
           headerData: csvHeader,
           cellData: searchData,
-          isMKIDPresent: isMKIDPresent,
+          isKIDPresent: isKIDPresent,
         ),
-        SizedBox(
+        const SizedBox(
           height: 100.0,
         )
       ],
     );
-  }
-
-  Future<List<List<dynamic>>> readDataFromCSV() async {
-    File file = File(path!);
-    List<List<dynamic>> data;
-    try {
-      final csvString = await file.readAsString();
-      final csvTable = const CsvToListConverter().convert(csvString);
-
-      data =
-          csvTable.map((row) => row.map((e) => e as dynamic).toList()).toList();
-    } catch (e) {
-      print(e);
-      return [];
-    }
-
-    return data;
   }
 }
 
@@ -140,7 +129,7 @@ InputDecoration textFieldInputDecoration = const InputDecoration(
       size: 30.0,
     ),
   ),
-  hintText: 'Search by MKID',
+  hintText: 'Search by K! ID',
   hintStyle:
       TextStyle(color: Color.fromARGB(101, 255, 255, 255), fontSize: 17.0),
   filled: true,

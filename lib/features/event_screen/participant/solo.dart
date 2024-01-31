@@ -1,81 +1,70 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:kevents/common/utils/utils.dart';
 import 'package:kevents/common/widgets/bottom_snackbar.dart';
 import 'package:kevents/common/widgets/button_box.dart';
 import 'package:kevents/common/widgets/custom_textfield.dart';
 import 'package:kevents/common/widgets/scanned_code_card.dart';
 import 'package:kevents/common/widgets/text.dart';
-import 'package:kevents/models/csv_data.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SoloParticipant extends StatefulWidget {
   final bool isTeam;
   final bool isFirstParticipant;
+  final String eventName;
 
   final Function(bool) makeNextClickedFalse;
-  SoloParticipant(
-      {super.key,
-      required this.isTeam,
-      required this.isFirstParticipant,
-      required this.makeNextClickedFalse});
+  const SoloParticipant({
+    super.key,
+    required this.isTeam,
+    required this.eventName,
+    required this.isFirstParticipant,
+    required this.makeNextClickedFalse,
+  });
 
   @override
   State<SoloParticipant> createState() => _SoloParticipantState();
 }
 
 class _SoloParticipantState extends State<SoloParticipant> {
-  @override
   final formKey = GlobalKey<FormState>();
 
   String? path;
   bool isScanning = false;
   bool isScanQrClicked = false;
-  Map<String, dynamic> participantData = {};
-  // String? _filePath; //Selected File Path
-  bool isFileSelected = false; //File Selected or Not
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   Barcode? scannedBarCode;
+  bool status = false;
+
+  //participant's name and kid
+  String? name;
+  String? kid;
+
+  //participant's detail
+  List<List<String>> data = [];
+
   QRViewController? controller;
   final TextEditingController mkidTextController = TextEditingController();
-  String? filePath;
   int? writeSuccessfull;
-  Future<void> _loadPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      filePath = prefs.getString('filePath');
-    });
-  }
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadPreferences();
-    });
+  void reassemble() async {
+    super.reassemble();
+    if (Platform.isAndroid) {
+      await controller!.pauseCamera();
+    }
+    controller!.resumeCamera();
   }
 
-  Future<void> writeCsv(
-      {required String filePath,
-      required List<dynamic> data,
-      required BuildContext context,
-      required bool isTeam,
-      required bool isFirstParticipant}) async {
-    writeSuccessfull = await writeListtoCsv(
-        isFirstParticipant: isFirstParticipant,
-        isTeam: isTeam,
-        filePath: filePath,
-        data: data,
-        context: context);
+  Future<void> addParticipantData() async {
+    writeSuccessfull = await writeListToCsv(data: data);
     setState(() {
       writeSuccessfull;
     });
   }
 
   void showSnackBarOnWrite(int value) {
-    print("Result:" + value.toString());
     if (value == 1) {
       showBottomSnackBar('Data added successfully', context);
     } else if (value == -1) {
@@ -87,6 +76,7 @@ class _SoloParticipantState extends State<SoloParticipant> {
     }
   }
 
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -95,12 +85,13 @@ class _SoloParticipantState extends State<SoloParticipant> {
           height: 15.0,
         ),
         //Scan Qr Image
-        (scannedBarCode != null)
+        (status)
             ? Column(
                 children: [
                   ScannedCodeCard(
-                      name: participantData["name"],
-                      mkid: participantData['mkid']),
+                    name: name!,
+                    kid: kid!,
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Row(
@@ -108,19 +99,8 @@ class _SoloParticipantState extends State<SoloParticipant> {
                       children: [
                         GestureDetector(
                             onTap: () async {
-                              await _loadPreferences();
-                              //Conver Mapto List<dynamic>
-                              List<dynamic> data =
-                                  participantData.values.toList();
+                              await addParticipantData();
 
-                              //write to csv file
-                              //local funcyion
-                              await writeCsv(
-                                  isFirstParticipant: widget.isFirstParticipant,
-                                  isTeam: widget.isTeam,
-                                  filePath: filePath!,
-                                  data: data,
-                                  context: context);
                               //Fuction to show snackbar
                               showSnackBarOnWrite(writeSuccessfull!);
                               //if data exists already
@@ -128,26 +108,27 @@ class _SoloParticipantState extends State<SoloParticipant> {
                                   writeSuccessfull == 0) {
                                 return;
                               }
+
                               //make isnextclicked false
                               widget.makeNextClickedFalse(false);
                               setState(() {
                                 isScanning = false;
                                 isScanQrClicked = false;
                                 scannedBarCode = null;
-                                participantData.clear();
+                                status = false;
                               });
                             },
-                            child: const ButtonBox(title: "ADD MKID")),
+                            child: const ButtonBox(title: "ADD KID")),
                         GestureDetector(
                             onTap: () {
                               setState(() {
                                 isScanning = false;
                                 isScanQrClicked = false;
                                 scannedBarCode = null;
-                                participantData.clear();
+                                status = false;
                               });
                             },
-                            child: ButtonBox(title: "QUIT SCAN")),
+                            child: const ButtonBox(title: "QUIT SCAN")),
                       ],
                     ),
                   )
@@ -183,7 +164,7 @@ class _SoloParticipantState extends State<SoloParticipant> {
                               isScanning = false;
                               isScanQrClicked = false;
                               scannedBarCode = null;
-                              participantData.clear();
+                              status = false;
                             });
                           },
                           child: const Padding(
@@ -235,42 +216,35 @@ class _SoloParticipantState extends State<SoloParticipant> {
           ),
           GestureDetector(
               onTap: () async {
-                if (formKey.currentState!.validate()) {
-                  print(mkidTextController.text);
-                  List<dynamic> mkidDataList = [
-                    "0",
-                    mkidTextController.text.toString(),
-                    "null",
-                    "null",
-                    "null",
-                    "null",
-                    "null"
-                  ];
+                List<String> temp = [
+                  mkidTextController.text.toString(),
+                  "-",
+                  "-",
+                  "-",
+                  "-",
+                  "-",
+                ];
+                if (!data.contains(temp)) data.add(temp);
 
-                  //write to csv file
-                  //local funcyion
-                  await writeCsv(
-                      isFirstParticipant: widget.isFirstParticipant,
-                      isTeam: widget.isTeam,
-                      filePath: filePath!,
-                      data: mkidDataList,
-                      context: context);
-                  //Fuction to show snackbar
-                  showSnackBarOnWrite(writeSuccessfull!);
-                  //if data exists already
-                  if (writeSuccessfull == -1 || writeSuccessfull == 0) {
-                    return;
-                  }
+                await addParticipantData();
 
-                  //make isnextclicked false
-                  widget.makeNextClickedFalse(false);
+                //Fuction to show snackbar
+                showSnackBarOnWrite(writeSuccessfull!);
+                //if data exists already
+                if (writeSuccessfull == -1 || writeSuccessfull == 0) {
+                  return;
                 }
+
+                mkidTextController.clear();
+
+                //make isnextclicked false
+                widget.makeNextClickedFalse(false);
               },
               child: const ButtonBox(title: "ADD MK!ID")),
         ],
         const SizedBox(height: 50.0),
         if (widget.isTeam)
-          SizedBox(
+          const SizedBox(
             height: 50.0,
           )
       ],
@@ -282,40 +256,37 @@ class _SoloParticipantState extends State<SoloParticipant> {
 
     controller.resumeCamera();
     controller.scannedDataStream.listen((scanData) async {
-      setState(() {
-        scannedBarCode = scanData;
-        participantData = json.decode(scannedBarCode!.code!);
-      });
-
-      // try {
-      //   String token = scannedBarCode!.code!
-      //       .substring(1, scannedBarCode!.code!.length - 1);
-      //   Map<String, dynamic> qrText = await jwtDecryption(token);
-      //   setState(() {
-      //     status = qrText['name'];
-      //   });
-      //   List<String> obj = [
-      //     qrText['kid'],
-      //     ' ',
-      //     qrText['name'],
-      //     qrText['phone'],
-      //     qrText['email'],
-      //     // qrText['cegian'],
-      //     qrText['college'],
-      //     // qrText['roll'] ?? '',
-      //   ];
-      //   kIdList.add(obj);
-      // } catch (e) {
-      //   print(e);
-      // }
-      // controller.pauseCamera();
+      scannedBarCode = scanData;
+      try {
+        String token = scannedBarCode!.code!
+            .substring(1, scannedBarCode!.code!.length - 1);
+        Map<String, dynamic> qrText = await jwtDecryption(token);
+        final paid = qrText['paid'];
+        final events = paid['events'];
+        name = qrText['name'];
+        kid = qrText['kid'];
+        List<String> temp = [
+          qrText['kid'].toString(),
+          qrText['name'].toString(),
+          qrText['email'].toString(),
+          qrText['phone'].toString(),
+          qrText['college'].toString(),
+          qrText['cegian'].toString(),
+        ];
+        if (!data.contains(temp)) data.add(temp);
+        setState(() {
+          status = !(isPaid(event: widget.eventName, eventList: events));
+        });
+      } catch (e) {
+        print(e);
+      }
     });
+    controller.pauseCamera();
   }
 
   @override
   void dispose() {
     controller?.dispose();
-
     super.dispose();
   }
 }

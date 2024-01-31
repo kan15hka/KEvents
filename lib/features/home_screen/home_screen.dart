@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kevents/common/widgets/background_widget.dart';
-import 'package:kevents/common/constants.dart';
 import 'package:kevents/features/home_screen/days_tab_bar.dart';
-import 'package:rive/rive.dart' as rive;
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -10,22 +8,20 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // resizeToAvoidBottomInset: false,
       body: BackgroundWidget(
         child: SafeArea(
           child: Column(
             children: [
-              Expanded(
+              const Expanded(
                 flex: 2,
-                child: Container(
-                  //color: Colors.red,
-                  child: const Center(
-                    child: Text(
-                      "K! Event Management",
-                      style: TextStyle(
-                          color: Color.fromARGB(255, 255, 255, 255),
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold),
-                    ),
+                child: Center(
+                  child: Text(
+                    "K! Event Management",
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

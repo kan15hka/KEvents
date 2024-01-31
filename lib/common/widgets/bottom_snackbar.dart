@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:kevents/common/constants.dart';
 import 'package:kevents/common/widgets/frosted_glass.dart';
 
-showBottomSnackBar(String text, BuildContext context) {
+void showBottomSnackBar(String text, BuildContext context) {
   ScaffoldMessenger.of(context).clearSnackBars();
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
         // duration: Duration(seconds: 4),
-        margin: EdgeInsets.only(bottom: 20.0),
+        margin: const EdgeInsets.only(bottom: 20.0),
         elevation: 0.0,
         behavior: SnackBarBehavior.floating,
         backgroundColor: Colors.transparent,

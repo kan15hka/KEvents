@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:kevents/common/constants.dart';
 import 'package:rive/rive.dart' as rive;
 
 class BackgroundWidget extends StatelessWidget {
-  Widget child;
-  BackgroundWidget({super.key, required this.child});
+  final Widget child;
+  const BackgroundWidget({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +24,7 @@ class BackgroundWidget extends StatelessWidget {
             ],
           )),
         ),
-        Container(
+        SizedBox(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: const rive.RiveAnimation.asset(
@@ -34,7 +33,7 @@ class BackgroundWidget extends StatelessWidget {
           ),
         ),
         //rive animation
-        Container(
+        SizedBox(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: const rive.RiveAnimation.asset(
@@ -42,9 +41,7 @@ class BackgroundWidget extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-
         //childwidget
-
         child
       ],
     );

@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:kevents/common/widgets/bottom_snackbar.dart';
 import 'package:kevents/common/widgets/button_box.dart';
@@ -22,7 +19,6 @@ class _TeamParticipantState extends State<TeamParticipant> {
   bool isFirstParticipant = true;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     index = 1;
   }
@@ -37,7 +33,6 @@ class _TeamParticipantState extends State<TeamParticipant> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     index = 1;
     isFirstParticipant = true;
@@ -80,6 +75,7 @@ class _TeamParticipantState extends State<TeamParticipant> {
         ),
         (isNextClicked)
             ? SoloParticipant(
+                eventName: "EVENT",
                 isTeam: true,
                 isFirstParticipant: isFirstParticipant,
                 makeNextClickedFalse: (bool newVal) {
@@ -104,6 +100,7 @@ class _TeamParticipantState extends State<TeamParticipant> {
     if (index >= 1) {
       await removeData(isTeamNo: true, listData: []);
     }
+    // ignore: use_build_context_synchronously
     showBottomSnackBar("Add Team Participants Quitted", context);
     setState(() {
       index = 1;

@@ -2,34 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:kevents/common/constants.dart';
 import 'package:shimmer/shimmer.dart';
 
-class ShimmerArrowsRight extends StatelessWidget {
-  const ShimmerArrowsRight({super.key});
+class ShimmerArrowRight extends StatelessWidget {
+  const ShimmerArrowRight({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
       direction: ShimmerDirection.ltr,
-      period: Duration(milliseconds: 750),
+      period: const Duration(milliseconds: 750),
       baseColor: kWhite,
       highlightColor: Colors.white10,
-      child: const Row(children: [
+      child: Row(children: [
         Align(
             widthFactor: 0.4,
             child: Icon(
               Icons.keyboard_arrow_right,
-              color: Colors.white,
+              color: Colors.white.withOpacity(0.5),
             )),
         Align(
             widthFactor: 0.4,
             child: Icon(
               Icons.keyboard_arrow_right,
-              color: Colors.white,
+              color: Colors.white.withOpacity(0.5),
             )),
         Align(
             widthFactor: .4,
             child: Icon(
               Icons.keyboard_arrow_right,
-              color: Colors.white,
+              color: Colors.white.withOpacity(0.5),
             )),
       ]),
     );

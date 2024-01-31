@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
-  GlobalKey formKey;
-  TextEditingController textController;
-  CustomTextField(
+  final GlobalKey formKey;
+  final TextEditingController textController;
+  const CustomTextField(
       {super.key, required this.textController, required this.formKey});
 
   @override

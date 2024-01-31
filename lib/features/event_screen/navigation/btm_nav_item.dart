@@ -21,7 +21,7 @@ class BtmNavItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: press,
-      child: Container(
+      child: SizedBox(
         height: 50.0,
         width: 100.0,
         child: Column(

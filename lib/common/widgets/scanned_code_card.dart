@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class ScannedCodeCard extends StatelessWidget {
   final String name;
-  final String mkid;
-  const ScannedCodeCard({super.key, required this.name, required this.mkid});
+  final String kid;
+  const ScannedCodeCard({super.key, required this.name, required this.kid});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class ScannedCodeCard extends StatelessWidget {
               )),
             ),
             Container(
-              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
               child: Column(
                 children: [
                   Row(
@@ -51,11 +51,11 @@ class ScannedCodeCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text(
-                        "MKID: ",
+                        "KID: ",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        mkid,
+                        kid,
                         textAlign: TextAlign.center,
                       ),
                     ],

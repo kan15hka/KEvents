@@ -10,7 +10,7 @@ class DayTab extends StatelessWidget {
     return Column(
       children: [
         AnimatedContainer(
-          duration: Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 500),
           height: 40.0,
           width: 80.0,
           decoration: BoxDecoration(
@@ -19,8 +19,8 @@ class DayTab extends StatelessWidget {
                 end: Alignment.bottomRight,
                 colors: isSelected
                     ? [
-                        Color.fromARGB(255, 34, 8, 100), // Dark blue
-                        Color.fromARGB(255, 67, 39, 107), // Dark purple
+                        const Color.fromARGB(255, 34, 8, 100), // Dark blue
+                        const Color.fromARGB(255, 67, 39, 107), // Dark purple
                       ]
                     : [Colors.transparent, Colors.transparent],
               ),
@@ -30,12 +30,12 @@ class DayTab extends StatelessWidget {
           child: Center(
             child: Text(
               day,
-              style: TextStyle(fontSize: 15.0, color: Colors.white),
+              style: const TextStyle(fontSize: 15.0, color: Colors.white),
             ),
           ),
         ),
         AnimatedContainer(
-          duration: Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 500),
           height: isSelected ? 20.0 : 0.0,
         )
       ],

@@ -4,7 +4,6 @@ import 'dart:io';
 //JWT Token Decryption
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:flutter/material.dart';
-import 'package:kevents/common/widgets/bottom_snackbar.dart';
 import 'package:pem/pem.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
@@ -21,9 +20,7 @@ Future<String> readFileContents(String filePath) async {
   return fileContents;
 }
 
-jwtDecryption(String token) async {
-  // Verify a token
-
+dynamic jwtDecryption(String token) async {
   String pem = await readFileContents('assets/public.pem').then(
     (value) => value.toString(),
   );
@@ -35,8 +32,6 @@ jwtDecryption(String token) async {
   final publicKey = RSAPublicKey(pemBlock);
   try {
     final jwt = JWT.verify(token, publicKey);
-
-    print('Payload: ${jwt.payload}');
     return jwt.payload['id'];
   } on JWTExpiredException {
     print('jwt expired');
@@ -45,15 +40,17 @@ jwtDecryption(String token) async {
   }
 }
 
-Future<int> writeListtoCsv(
-    {required String filePath,
-    required List<dynamic> data,
-    required BuildContext context,
-    required bool isTeam,
-    required bool isFirstParticipant}) async {
+Future<int> writeListtoCsv({
+  required List<dynamic> data,
+  required BuildContext context,
+  required bool isTeam,
+  required bool isFirstParticipant,
+}) async {
   try {
-    print("sssss" + filePath);
-    File file = File(filePath);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? filePath = prefs.getString('filePath');
+    print(filePath);
+    File file = File(filePath!);
 
     if (!file.existsSync()) {
       file.createSync(recursive: true);
@@ -72,13 +69,13 @@ Future<int> writeListtoCsv(
     int? dataTeamNo = 1;
     //if file not empty
     if (csvData.length >= 2) {
-      lastTeamNo = await int.parse(csvData[csvData.length - 1][0].toString());
+      lastTeamNo = int.parse(csvData[csvData.length - 1][0].toString());
       dataTeamNo = (lastTeamNo + 1);
     }
     //if is team and not first particpant toreapeat teamno
     if (isTeam && !isFirstParticipant) {
-      dataTeamNo = await int.parse(
-          csvData[csvData.length - 1][0].toString()); //last team no
+      dataTeamNo =
+          int.parse(csvData[csvData.length - 1][0].toString()); //last team no
     }
     data[0] = dataTeamNo.toString();
 
@@ -151,14 +148,14 @@ Future<void> removeData(
     csvData.removeWhere((e) => toRemove.contains(e));
   } else {
     if (listData.isNotEmpty) {
-      listData.forEach((element) {
+      for (var element in listData) {
         toRemove.add(element);
-      });
+      }
       () async {
         csvData.removeWhere((e) => toRemove.contains(e));
       };
     } else {
-      print("d");
+      //todo: do something
     }
   }
 
@@ -169,7 +166,7 @@ Future<void> removeData(
 Future<void> removeListAsync(
     List<List<dynamic>> listOfLists, List<dynamic> listToRemove) async {
   // Simulate an asynchronous operation (e.g., API call, database operation)
-  await Future.delayed(Duration(seconds: 2));
+  await Future.delayed(const Duration(seconds: 2));
 
   // Remove the specified list from the listOfLists
   listOfLists.remove(listToRemove);
