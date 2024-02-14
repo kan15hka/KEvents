@@ -12,10 +12,6 @@ class SendFileButton extends StatefulWidget {
 }
 
 class _SendFileButtonState extends State<SendFileButton> {
-  void _showSnackBar({required String message}) {
-    showBottomSnackBar(message, context);
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -23,10 +19,20 @@ class _SendFileButtonState extends State<SendFileButton> {
         final shareResult = await Share.shareXFiles([XFile(widget.filePath!)]);
 
         if (shareResult.status == ShareResultStatus.success) {
-          _showSnackBar(message: 'Share successfull');
+          showBottomSnackBar(
+            context: context,
+            title: "Share succesful!",
+            content: "The has been successfully shared",
+            status: SnackBarStatus.success,
+          );
         }
         if (shareResult.status == ShareResultStatus.dismissed) {
-          _showSnackBar(message: 'Share dismissed');
+          showBottomSnackBar(
+            context: context,
+            title: "Share dismissed!",
+            content: "File share has been dismissed by you",
+            status: SnackBarStatus.success,
+          );
         }
       },
       child: Container(

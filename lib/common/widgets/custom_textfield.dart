@@ -13,17 +13,42 @@ class CustomTextField extends StatelessWidget {
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'The MKID cannot be empty';
+            return 'K!ID cannot be empty';
           } else if (value.length != 8) {
-            return 'MKID is 8 character long';
+            return 'K!ID is 8 character long';
           }
           return null;
         },
         style: const TextStyle(color: Colors.white, fontSize: 17.0),
         controller: textController,
-        decoration: const InputDecoration(
-          hintText: 'eg: xxxxxxxx',
-          hintStyle: TextStyle(
+        decoration: InputDecoration(
+          prefixIcon: Container(
+            height: 40.0,
+            width: 40.0,
+            margin: EdgeInsets.symmetric(horizontal: 7.5, vertical: 5),
+            decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color.fromARGB(40, 34, 8, 100), // Dark blue
+                      Color.fromARGB(40, 67, 39, 107), // Dark purple
+                    ]),
+                shape: BoxShape.circle,
+                border: Border.all(
+                    color: Colors.white.withOpacity(0.25), width: 1.5)),
+            child: Center(
+              child: Text(
+                "K!ID",
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.75),
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ),
+          labelText: 'Enter K!ID',
+          labelStyle: TextStyle(
               color: Color.fromARGB(101, 255, 255, 255), fontSize: 17.0),
           filled: true,
           enabledBorder: OutlineInputBorder(

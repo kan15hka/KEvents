@@ -32,10 +32,15 @@ class _ViewSearchParticipantPageState extends State<ViewSearchParticipantPage> {
   void _loadCSV() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     filePath = prefs.getString('filePath');
+    print(filePath);
     readDataFromCSV().then(
       (value) => setState(() {
         csvData = value;
-        searchData = csvData.sublist(1);
+        if (csvData.length <= 1) {
+          searchData = [];
+        } else {
+          searchData = csvData.sublist(1);
+        }
       }),
     );
   }
@@ -86,7 +91,6 @@ class _ViewSearchParticipantPageState extends State<ViewSearchParticipantPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            SendFileButton(filePath: filePath),
             SizedBox(
               height: 60.0,
               width: MediaQuery.of(context).size.width * 0.7,
@@ -99,6 +103,7 @@ class _ViewSearchParticipantPageState extends State<ViewSearchParticipantPage> {
                 decoration: textFieldInputDecoration,
               ),
             ),
+            SendFileButton(filePath: filePath),
           ],
         ),
         const SizedBox(

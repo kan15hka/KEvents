@@ -2,15 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:kevents/common/widgets/button_box.dart';
 import 'package:kevents/common/widgets/frosted_glass_box.dart';
 
-void deleteRowDialog({
+void showGlassDialogBox({
+  required String title,
+  required String content,
+  bool isNoRequired = false,
+  double buttonWidth = 70.0,
+  required String buttonTitle,
   required BuildContext context,
-  required String kid,
   required Function() onTapYes,
 }) {
   showDialog(
+    barrierDismissible: false,
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
+        elevation: 0.75,
+
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -27,34 +34,37 @@ void deleteRowDialog({
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              const Row(
+              Row(
                 children: [
                   Text(
-                    'Delete Row',
+                    title,
                     style:
-                        TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                        const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
-              Text("Do you really want remove participant with K! ID: $kid?"),
+              Text(content),
               Row(
                 children: [
                   const Spacer(),
                   GestureDetector(
                       onTap: onTapYes,
-                      child: const OutlinedBox(boxWidth: 70.0, title: "Yes")),
+                      child: OutlinedBox(
+                          boxWidth: buttonWidth, title: buttonTitle)),
                   const SizedBox(
                     width: 20.0,
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const OutlinedBox(boxWidth: 70.0, title: "No"),
-                  ),
-                  const SizedBox(
-                    width: 20.0,
-                  ),
+                  if (isNoRequired) ...[
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: OutlinedBox(boxWidth: buttonWidth, title: "No"),
+                    ),
+                    const SizedBox(
+                      width: 20.0,
+                    ),
+                  ]
                 ],
               )
             ],

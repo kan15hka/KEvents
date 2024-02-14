@@ -1,10 +1,13 @@
 import 'dart:io';
 
+import 'package:animated_snack_bar/animated_snack_bar.dart';
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:flutter/material.dart';
 import 'package:kevents/common/utils/utils.dart';
 import 'package:kevents/common/widgets/bottom_snackbar.dart';
 import 'package:kevents/common/widgets/button_box.dart';
 import 'package:kevents/common/widgets/custom_textfield.dart';
+import 'package:kevents/common/widgets/delete_row_dialog.dart';
 import 'package:kevents/common/widgets/scanned_code_card.dart';
 import 'package:kevents/common/widgets/text.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -42,7 +45,7 @@ class _SoloParticipantState extends State<SoloParticipant> {
   String? kid;
 
   //participant's detail
-  List<List<String>> data = [];
+  List<String> data = [];
 
   QRViewController? controller;
   final TextEditingController mkidTextController = TextEditingController();
@@ -57,8 +60,10 @@ class _SoloParticipantState extends State<SoloParticipant> {
     controller!.resumeCamera();
   }
 
-  Future<void> addParticipantData() async {
-    writeSuccessfull = await writeListToCsv(data: data);
+  Future<void> addParticipantData(
+      {required bool isFirstParticipant, required bool isTeam}) async {
+    writeSuccessfull = await writeListToCsv(
+        data: data, isFirstParticipant: isFirstParticipant, isTeam: isTeam);
     setState(() {
       writeSuccessfull;
     });
@@ -66,11 +71,28 @@ class _SoloParticipantState extends State<SoloParticipant> {
 
   void showSnackBarOnWrite(int value) {
     if (value == 1) {
-      showBottomSnackBar('Data added successfully', context);
+      showBottomSnackBar(
+        context: context,
+        title: "Participant Added!",
+        content:
+            "Participant data is successfully added for the event ${capitalizeAllWord(widget.eventName)}",
+      );
     } else if (value == -1) {
-      showBottomSnackBar('Data Exists already', context);
+      showBottomSnackBar(
+        context: context,
+        title: "Already Exists!",
+        content:
+            "Participant has been added already for the event ${capitalizeAllWord(widget.eventName)}",
+        status: SnackBarStatus.warning,
+      );
     } else if (value == 0) {
-      showBottomSnackBar('Error Processing data', context);
+      showBottomSnackBar(
+        context: context,
+        title: "Oh Snap!",
+        content:
+            "Error adding participant data for the event ${widget.eventName}",
+        status: SnackBarStatus.failure,
+      );
     } else {
       print("Other error");
     }
@@ -99,7 +121,10 @@ class _SoloParticipantState extends State<SoloParticipant> {
                       children: [
                         GestureDetector(
                             onTap: () async {
-                              await addParticipantData();
+                              await addParticipantData(
+                                  isTeam: widget.isTeam,
+                                  isFirstParticipant:
+                                      widget.isFirstParticipant);
 
                               //Fuction to show snackbar
                               showSnackBarOnWrite(writeSuccessfull!);
@@ -199,7 +224,7 @@ class _SoloParticipantState extends State<SoloParticipant> {
         if (!isScanning) ...[
           //OR TEXT
           orText(),
-          textDesc('Enter the MK!Id'),
+          textDesc('Enter the K!Id'),
           //Text Field
           Padding(
             padding: const EdgeInsets.symmetric(
@@ -216,33 +241,42 @@ class _SoloParticipantState extends State<SoloParticipant> {
           ),
           GestureDetector(
               onTap: () async {
-                List<String> temp = [
-                  mkidTextController.text.toString(),
-                  "-",
-                  "-",
-                  "-",
-                  "-",
-                  "-",
-                ];
-                if (!data.contains(temp)) data.add(temp);
+                if (formKey.currentState!.validate()) {
+                  FocusScope.of(context).requestFocus(FocusNode());
 
-                await addParticipantData();
+                  List<String> temp = [
+                    "TeamNumber",
+                    mkidTextController.text.toString(),
+                    "-",
+                    "-",
+                    "-",
+                    "-",
+                    "-",
+                  ];
+                  data.clear();
+                  data.addAll(temp);
+                  //if (!data.contains(temp)) data.add(temp);
 
-                //Fuction to show snackbar
-                showSnackBarOnWrite(writeSuccessfull!);
-                //if data exists already
-                if (writeSuccessfull == -1 || writeSuccessfull == 0) {
-                  return;
+                  await addParticipantData(
+                      isTeam: widget.isTeam,
+                      isFirstParticipant: widget.isFirstParticipant);
+
+                  //Fuction to show snackbar
+                  showSnackBarOnWrite(writeSuccessfull!);
+                  //if data exists already
+                  if (writeSuccessfull == -1 || writeSuccessfull == 0) {
+                    return;
+                  }
+
+                  mkidTextController.clear();
+
+                  //make isnextclicked false
+                  widget.makeNextClickedFalse(false);
                 }
-
-                mkidTextController.clear();
-
-                //make isnextclicked false
-                widget.makeNextClickedFalse(false);
               },
-              child: const ButtonBox(title: "ADD MK!ID")),
+              child: const ButtonBox(title: "ADD K!ID")),
         ],
-        const SizedBox(height: 50.0),
+        const SizedBox(height: 100.0),
         if (widget.isTeam)
           const SizedBox(
             height: 50.0,
@@ -261,11 +295,36 @@ class _SoloParticipantState extends State<SoloParticipant> {
         String token = scannedBarCode!.code!
             .substring(1, scannedBarCode!.code!.length - 1);
         Map<String, dynamic> qrText = await jwtDecryption(token);
-        final paid = qrText['paid'];
-        final events = paid['events'];
-        name = qrText['name'];
-        kid = qrText['kid'];
+        final paid = qrText['paid'] ?? {};
+        final bool isEventPaid =
+            isPaid(event: widget.eventName, eventList: paid);
+        if (!isEventPaid) {
+          await controller.pauseCamera();
+
+          setState(() {
+            isScanning = false;
+            isScanQrClicked = false;
+            scannedBarCode = null;
+            status = false;
+          });
+          showGlassDialogBox(
+            title: "Not Paid!!",
+            content:
+                "Participant ${qrText['name']} has not paid for the ${capitalizeAllWord(widget.eventName)} event.",
+            buttonTitle: "Okay",
+            buttonWidth: 100.0,
+            context: context,
+            onTapYes: () {
+              Navigator.of(context).pop();
+            },
+          );
+        }
+
+        ///work
+        name = qrText['name'] ?? "";
+        kid = qrText['kid'] ?? "";
         List<String> temp = [
+          "TeamNumber",
           qrText['kid'].toString(),
           qrText['name'].toString(),
           qrText['email'].toString(),
@@ -273,10 +332,15 @@ class _SoloParticipantState extends State<SoloParticipant> {
           qrText['college'].toString(),
           qrText['cegian'].toString(),
         ];
-        if (!data.contains(temp)) data.add(temp);
+        if (!data.contains(temp)) data.addAll(temp);
         setState(() {
-          status = !(isPaid(event: widget.eventName, eventList: events));
+          status = isEventPaid;
         });
+      } on JWTExpiredException {
+        print('jwt expired');
+      } on JWTException catch (ex) {
+        //todo: display a snackbar
+        print('Error : Decrypt -> ${ex.message}'); // ex: invalid signature
       } catch (e) {
         print(e);
       }
@@ -288,5 +352,6 @@ class _SoloParticipantState extends State<SoloParticipant> {
   void dispose() {
     controller?.dispose();
     super.dispose();
+    AnimatedSnackBar.removeAll();
   }
 }

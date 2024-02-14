@@ -1,24 +1,24 @@
-List<List<Map<String, String>>> events = [
+List<List<Map<String, dynamic>>> events = [
   [
-    {"title": "GENERAL REGISTRATION", "type": "team"},
+    {"title": "GENERAL REGISTRATION", "type": "solo"},
     {"title": "PAPER PRESENTATION", "type": "solo"},
-    {"title": "INNOVPRESENTATION", "type": "team"},
-    {"title": "ONLINE", "type": "team"},
-    {"title": "GODSPEED", "type": "team"},
+    {"title": "INNOVPRESENTATION", "type": "team", "count": 4},
+    {"title": "ONLINE", "type": "team", "count": 4},
+    {"title": "GODSPEED", "type": "team", "count": 4},
   ],
   [
-    {"title": "GENERAL REGISTRATION", "type": "team"},
+    {"title": "GENERAL REGISTRATION", "type": "solo"},
     {"title": "PAPER PRESENTATION", "type": "solo"},
-    {"title": "INNOVPRESENTATION", "type": "team"},
-    {"title": "ONLINE", "type": "team"},
-    {"title": "GODSPEED", "type": "team"},
+    {"title": "INNOVPRESENTATION", "type": "team", "count": 4},
+    {"title": "ONLINE", "type": "team", "count": 4},
+    {"title": "GODSPEED", "type": "team", "count": 4},
   ],
   [
-    {"title": "GENERAL REGISTRATION", "type": "team"},
+    {"title": "GENERAL REGISTRATION", "type": "solo"},
     {"title": "PAPER PRESENTATION", "type": "solo"},
-    {"title": "INNOVPRESENTATION", "type": "team"},
-    {"title": "ONLINE", "type": "team"},
-    {"title": "GODSPEED", "type": "team"},
+    {"title": "INNOVPRESENTATION", "type": "team", "count": 4},
+    {"title": "ONLINE", "type": "team", "count": 4},
+    {"title": "GODSPEED", "type": "team", "count": 4},
   ],
 ];
 

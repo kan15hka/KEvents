@@ -1,6 +1,6 @@
 name: kevents
 description: Event Management App for Kurukshetra CEG.
-publish_to: "none" 
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
@@ -26,6 +26,8 @@ dependencies:
   font_awesome_flutter: ^10.6.0
   share_plus: ^7.2.1
   cupertino_icons: ^1.0.2
+  glassmorphism_ui: ^0.3.0
+  animated_snack_bar: ^0.4.0
 
 dev_dependencies:
   flutter_test:
@@ -46,3 +48,15 @@ flutter:
     - family: NovaSquare
       fonts:
         - asset: assets/fonts/NovaSquare-Regular.ttf
+    - family: MeteoricLight
+      fonts:
+        - asset: assets/fonts/Meteoric-light.otf
+    - family: Anxiety
+      fonts:
+        - asset: assets/fonts/anxiety-anxiety-regular-400.otf
+    - family: Nasalization
+      fonts:
+        - asset: assets/fonts/nasalization-rg.otf
+    - family: ProductSans
+      fonts:
+        - asset: assets/fonts/Product Sans Regular.ttf

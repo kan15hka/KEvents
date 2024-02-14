@@ -39,7 +39,7 @@ class KEventsApp extends StatelessWidget {
         ),
         textTheme: const TextTheme(
             bodyMedium: TextStyle(fontSize: 16.0, color: kWhite)),
-        fontFamily: "NovaSquare",
+        fontFamily: "Nasalization",
       ),
       home: const HomeScreen(),
     );

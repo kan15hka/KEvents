@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kevents/common/constants.dart';
 import 'package:kevents/common/utils/utils.dart';
+import 'package:kevents/common/widgets/bottom_snackbar.dart';
 import 'package:kevents/common/widgets/delete_row_dialog.dart';
 import 'package:kevents/common/widgets/frosted_glass.dart';
 import 'package:kevents/common/widgets/shimmer_arrow_right.dart';
@@ -23,6 +24,66 @@ class ParticipantTable extends StatefulWidget {
 }
 
 class _ParticipantTableState extends State<ParticipantTable> {
+  void removeRow(List<dynamic> csvrow) {
+    //Get kid
+    String kid = csvrow[1].toString();
+    // Get removed csvrow team no
+    String removeTeamNoStr =
+        (csvrow[0].toString().replaceFirst("Team - ", "0"));
+    int removeTeamNo = int.tryParse(removeTeamNoStr) ?? 0;
+
+    // Get removerow index
+    int removeIndex = widget.cellData.indexOf(csvrow);
+
+    String teamNoStr = "";
+    int teamNo = 0;
+
+    // Remove the row
+    widget.cellData.remove(csvrow);
+
+    // Update team numbers
+    for (int i = removeIndex; i < widget.cellData.length; i++) {
+      teamNoStr =
+          (widget.cellData[i][0].toString().replaceFirst("Team - ", "0"));
+      teamNo = int.tryParse(teamNoStr) ?? 0;
+
+      // Decrement team no
+      if (teamNo == removeTeamNo) {
+        teamNo = removeTeamNo;
+      } else {
+        teamNo -= 1;
+      }
+
+      // Update team no in the data
+      widget.cellData[i][0] = "Team - $teamNo";
+    }
+    removeListFromFile(kid);
+    // Refresh UI
+    setState(() {});
+  }
+
+  void removeListFromFile(String kid) async {
+    int result = await removeDataList(data: widget.cellData);
+    if (result == 1) {
+      // ignore: use_build_context_synchronously
+      showBottomSnackBar(
+        context: context,
+        title: "Particiant Removed!",
+        content:
+            "The participant with kid : $kid, has been removed successfully",
+        status: SnackBarStatus.success,
+      );
+    } else {
+      // ignore: use_build_context_synchronously
+      showBottomSnackBar(
+        context: context,
+        title: "Oh Snap!",
+        content: "Error in removing participant with kid : $kid",
+        status: SnackBarStatus.success,
+      );
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -94,14 +155,16 @@ class _ParticipantTableState extends State<ParticipantTable> {
                                   .map(
                                     (csvrow) => DataRow(
                                       onLongPress: () {
-                                        deleteRowDialog(
+                                        showGlassDialogBox(
+                                            isNoRequired: true,
+                                            buttonTitle: "Yes",
+                                            title: 'Delete Row',
+                                            content:
+                                                "Do you really want remove participant with K! ID: ${csvrow[1].toString()}?",
                                             context: context,
-                                            kid: csvrow[1].toString(),
                                             onTapYes: () {
-                                              removeParticipantDetail(
-                                                kid: csvrow[1].toString(),
-                                              );
-                                              setState(() {});
+                                              removeRow(csvrow);
+
                                               Navigator.pop(context);
                                             });
                                       },

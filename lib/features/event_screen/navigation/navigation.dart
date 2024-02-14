@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:kevents/common/widgets/background_widget.dart';
 import 'package:kevents/common/widgets/frosted_glass_box.dart';
 import 'package:kevents/models/menu.dart';
@@ -6,14 +7,17 @@ import 'package:kevents/features/event_screen/navigation/btm_nav_item.dart';
 import 'package:kevents/features/event_screen/participant/add_participant_page.dart';
 import 'package:kevents/features/event_screen/search/view_search_participant_page.dart';
 import 'package:kevents/common/utils/rive_utils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../models/csv_data.dart';
 
 class NavigationWidget extends StatefulWidget {
   final String event;
   final String eventType;
+  final int count;
   const NavigationWidget(
-      {super.key, required this.event, required this.eventType});
+      {super.key,
+      required this.event,
+      required this.eventType,
+      required this.count});
 
   @override
   State<NavigationWidget> createState() => _NavigationWidgetState();
@@ -59,6 +63,7 @@ class _NavigationWidgetState extends State<NavigationWidget>
         'page': AddParticipantPage(
           eventName: widget.event,
           eventType: eventType!,
+          count: widget.count,
         ),
         'title': 'Add ${eventType!.toString()} Participant',
       },
@@ -71,20 +76,6 @@ class _NavigationWidgetState extends State<NavigationWidget>
   }
 
   @override
-  void dispose() {
-    data.clear();
-    _clearPreferences();
-    super.dispose();
-  }
-
-  void _clearPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('fileSelected', false);
-    prefs.setString('filePath', '');
-    prefs.setString('eventType', '');
-  }
-
-  @override
   Widget build(BuildContext context) {
     bool keyboardIsOpened = MediaQuery.of(context).viewInsets.bottom != 0.0;
     return Scaffold(
@@ -92,95 +83,119 @@ class _NavigationWidgetState extends State<NavigationWidget>
       backgroundColor: const Color.fromARGB(255, 24, 20, 57),
       //backgorund widget
       body: BackgroundWidget(
-        child: SafeArea(
-          child: LayoutBuilder(builder: (context, constraint) {
-            return SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraint.maxHeight),
-                child: IntrinsicHeight(
-                  child: Column(
-                    children: [
-                      //AppBar
-                      Row(
-                        children: [
-                          //back Icon
-                          GestureDetector(
-                            onTap: () {
-                              _clearPreferences();
-                              setState(() {});
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                                height: 30.0,
-                                width: 60.0,
-                                decoration: const BoxDecoration(
-                                    //color: Colors.amber, shape: BoxShape.circle
-                                    ),
-                                child: const Icon(
-                                  Icons.arrow_back,
-                                  color: Colors.white,
-                                )),
-                          ),
-                          //event Title
-                          Expanded(
-                            child: Container(
-                              //color: Colors.red,
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
-                              child: Center(
-                                child: Text(
-                                  widget.event,
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                      color: Color.fromARGB(255, 255, 255, 255),
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 60.0,
-                          )
+        child: LayoutBuilder(builder: (context, constraint) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraint.maxHeight),
+              child: IntrinsicHeight(
+                child: Column(
+                  children: [
+                    //AppBar
+                    GlassContainer(
+                      blur: 10,
+                      color: Colors.white.withOpacity(0.1),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Colors.white.withOpacity(0.4),
+                          Colors.blue.withOpacity(0.6),
                         ],
                       ),
-                      //Bottom Nav Title
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10.0),
-                        child: FrostedGlassBox(
-                          boxHieght: 50.0,
-                          boxWidth: MediaQuery.of(context).size.width,
-                          borderRadius: 0.0,
-                          isBorderRequired: false,
-                          child: Center(
-                            child: Text(
-                              _pages[selectedIndex]["title"]
-                                  .toString()
-                                  .toUpperCase(),
-                              textAlign: TextAlign.left,
-                              style: const TextStyle(
-                                  color: Color.fromARGB(255, 255, 255, 255),
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.bold),
+                      //--code to remove border
+                      border: Border.fromBorderSide(BorderSide.none),
+                      borderRadius: BorderRadius.circular(0),
+                      child: Container(
+                        //color: Colors.red,
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: 35.0,
+                            ),
+                            Row(
+                              children: [
+                                //back Icon
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {});
+                                    Navigator.pop(context);
+                                  },
+                                  child: Container(
+                                      height: 30.0,
+                                      width: 60.0,
+                                      decoration: const BoxDecoration(
+                                          //color: Colors.amber, shape: BoxShape.circle
+                                          ),
+                                      child: const Icon(
+                                        Icons.arrow_back,
+                                        color: Colors.white,
+                                      )),
+                                ),
+                                //event Title
+                                Expanded(
+                                  child: Container(
+                                    //color: Colors.amber,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: Text(
+                                      widget.event.toUpperCase(),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      softWrap: true,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        color:
+                                            Color.fromARGB(255, 255, 255, 255),
+                                        fontSize: 20.0,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 60.0,
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    //Bottom Nav Title
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: FrostedGlassBox(
+                        boxHieght: 50.0,
+                        boxWidth: MediaQuery.of(context).size.width,
+                        borderRadius: 0.0,
+                        isBorderRequired: false,
+                        child: Center(
+                          child: Text(
+                            _pages[selectedIndex]["title"]
+                                .toString()
+                                .toUpperCase(),
+                            textAlign: TextAlign.left,
+                            style: const TextStyle(
+                              color: Color.fromARGB(255, 255, 255, 255),
+                              fontSize: 18.0,
                             ),
                           ),
                         ),
                       ),
+                    ),
 
-                      //Body
-                      Expanded(
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: _pages[selectedIndex]["page"],
-                        ),
+                    //Body
+                    Expanded(
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: _pages[selectedIndex]["page"],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-            );
-          }),
-        ),
+            ),
+          );
+        }),
       ),
       //Bottom Navigation Bar and Send Button
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

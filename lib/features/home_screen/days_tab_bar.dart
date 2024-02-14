@@ -60,6 +60,15 @@ class _DaysTabBarState extends State<DaysTabBar> with TickerProviderStateMixin {
     }
   }
 
+  Future<void> _clearPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('fileSelected', false);
+    prefs.setString('filePath', '');
+    prefs.setString('eventType', '');
+    prefs.setInt("teamNo", 0);
+    prefs.setString('kid', '');
+  }
+
   @override
   Widget build(BuildContext context) {
     return (isProcessingFile)
@@ -113,6 +122,7 @@ class _DaysTabBarState extends State<DaysTabBar> with TickerProviderStateMixin {
                         .map(
                           (dayEvents) => ListView(
                             //controller: _controller,
+                            padding: EdgeInsets.zero,
                             physics: const BouncingScrollPhysics(),
                             children: events[currentIndex].map((eventMap) {
                               int eventIndex =
@@ -123,28 +133,33 @@ class _DaysTabBarState extends State<DaysTabBar> with TickerProviderStateMixin {
                                   setState(() {
                                     isProcessingFile = true;
                                   });
+                                  await _clearPreferences();
                                   createFolderAndCSVFile(eventMap["title"]!);
                                   setState(() {
                                     isProcessingFile = false;
                                     eventType = eventMap["type"]!;
                                     _filePath;
                                   });
+                                  // ignore: use_build_context_synchronously
                                   Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              NavigationWidget(
-                                                  event: eventMap["title"]!,
-                                                  eventType: eventType!)));
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => NavigationWidget(
+                                        event: eventMap["title"]!,
+                                        eventType: eventType!,
+                                        count: eventMap["count"] ?? 1,
+                                      ),
+                                    ),
+                                  );
                                 },
                                 child: FrostedGlassEventBox(
-                                    boxIndex: eventIndex,
-                                    boxWidth:
-                                        MediaQuery.of(context).size.width *
-                                            0.85,
-                                    verticalBoxMargin: 15.0,
-                                    boxType: eventMap["type"]!,
-                                    boxTitle: eventMap["title"]!),
+                                  boxIndex: eventIndex,
+                                  boxWidth:
+                                      MediaQuery.of(context).size.width * 0.85,
+                                  verticalBoxMargin: 15.0,
+                                  boxType: eventMap["type"]!,
+                                  boxTitle: eventMap["title"]!,
+                                ),
                               );
                             }).toList(),
                           ),

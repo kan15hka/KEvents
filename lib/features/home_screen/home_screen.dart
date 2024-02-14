@@ -13,12 +13,12 @@ class HomeScreen extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
-              const Expanded(
+              Expanded(
                 flex: 2,
                 child: Center(
                   child: Text(
-                    "K! Event Management",
-                    style: TextStyle(
+                    "K! Event Management".toUpperCase(),
+                    style: const TextStyle(
                         color: Color.fromARGB(255, 255, 255, 255),
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold),
@@ -29,7 +29,6 @@ class HomeScreen extends StatelessWidget {
                 flex: 16,
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  //color: Colors.green,
                   child: const DaysTabBar(),
                 ),
               ),
