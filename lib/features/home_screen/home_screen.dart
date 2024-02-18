@@ -15,13 +15,16 @@ class HomeScreen extends StatelessWidget {
             children: [
               Expanded(
                 flex: 2,
-                child: Center(
-                  child: Text(
-                    "K! Event Management".toUpperCase(),
-                    style: const TextStyle(
+                child: Container(
+                  child: Center(
+                    child: Text(
+                      "K! Events".toUpperCase(),
+                      style: const TextStyle(
+                        fontFamily: "MeteoricLight",
                         color: Color.fromARGB(255, 255, 255, 255),
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold),
+                        fontSize: 30.0,
+                      ),
+                    ),
                   ),
                 ),
               ),

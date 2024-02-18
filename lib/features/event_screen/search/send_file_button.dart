@@ -31,7 +31,7 @@ class _SendFileButtonState extends State<SendFileButton> {
             context: context,
             title: "Share dismissed!",
             content: "File share has been dismissed by you",
-            status: SnackBarStatus.success,
+            status: SnackBarStatus.warning,
           );
         }
       },

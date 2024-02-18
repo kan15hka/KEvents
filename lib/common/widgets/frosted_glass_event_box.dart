@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 
@@ -6,7 +5,7 @@ class FrostedGlassEventBox extends StatelessWidget {
   final double boxWidth;
   final int boxIndex;
   final double verticalBoxMargin;
-  final String boxType;
+  final int boxCount;
 
   final String boxTitle;
   const FrostedGlassEventBox(
@@ -14,7 +13,7 @@ class FrostedGlassEventBox extends StatelessWidget {
       required this.boxIndex,
       required this.verticalBoxMargin,
       required this.boxWidth,
-      required this.boxType,
+      required this.boxCount,
       required this.boxTitle});
 
   @override
@@ -76,19 +75,19 @@ class FrostedGlassEventBox extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    //Event Type
-                    Text(
-                      boxType[0].toUpperCase() + boxType.substring(1),
-                      style: TextStyle(
-                        fontSize: 11.0,
-                        color: Colors.white.withOpacity(0.75),
-                      ),
-                    ),
                     Text(
                       boxTitle,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 15.0,
+                      ),
+                    ),
+                    SizedBox(height: 5.0),
+                    Text(
+                      "$boxCount members",
+                      style: TextStyle(
+                        fontSize: 11.0,
+                        color: Colors.white.withOpacity(0.5),
                       ),
                     ),
                   ],

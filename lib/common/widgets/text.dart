@@ -5,7 +5,7 @@ Widget textDesc(String content) {
     padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
     child: Text(
       content,
-      style: const TextStyle(fontSize: 17.0, color: Colors.white),
+      style: TextStyle(fontSize: 15.0, color: Colors.white.withOpacity(0.75)),
     ),
   );
 }

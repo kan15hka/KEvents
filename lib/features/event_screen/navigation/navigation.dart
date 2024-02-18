@@ -11,13 +11,13 @@ import '../../../models/csv_data.dart';
 
 class NavigationWidget extends StatefulWidget {
   final String event;
-  final String eventType;
   final int count;
+  final String code;
   const NavigationWidget(
       {super.key,
       required this.event,
-      required this.eventType,
-      required this.count});
+      required this.count,
+      required this.code});
 
   @override
   State<NavigationWidget> createState() => _NavigationWidgetState();
@@ -42,11 +42,11 @@ class _NavigationWidgetState extends State<NavigationWidget>
   late Animation<double> animation;
 
   late List<Map<String, dynamic>> _pages;
-  String? eventType;
+  int? eventCount;
   String? fpath;
   @override
   void initState() {
-    eventType = widget.eventType;
+    eventCount = widget.count;
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 200))
       ..addListener(
@@ -62,10 +62,10 @@ class _NavigationWidgetState extends State<NavigationWidget>
       {
         'page': AddParticipantPage(
           eventName: widget.event,
-          eventType: eventType!,
           count: widget.count,
+          code: widget.code,
         ),
-        'title': 'Add ${eventType!.toString()} Participant',
+        'title': 'Add Participant',
       },
       {
         'page': const ViewSearchParticipantPage(),
@@ -107,10 +107,11 @@ class _NavigationWidgetState extends State<NavigationWidget>
                       borderRadius: BorderRadius.circular(0),
                       child: Container(
                         //color: Colors.red,
+                        constraints: BoxConstraints(minHeight: 100.0),
                         child: Column(
                           children: [
                             SizedBox(
-                              height: 35.0,
+                              height: 45.0,
                             ),
                             Row(
                               children: [

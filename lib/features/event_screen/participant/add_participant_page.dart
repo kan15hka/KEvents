@@ -5,14 +5,14 @@ import 'package:kevents/features/event_screen/participant/team.dart';
 
 class AddParticipantPage extends StatefulWidget {
   final String eventName;
-  final String eventType;
   final int count;
+  final String code;
 
   const AddParticipantPage(
       {super.key,
       required this.eventName,
-      required this.eventType,
-      required this.count});
+      required this.count,
+      required this.code});
 
   @override
   State<AddParticipantPage> createState() => _AddParticipantPageState();
@@ -21,16 +21,18 @@ class AddParticipantPage extends StatefulWidget {
 class _AddParticipantPageState extends State<AddParticipantPage> {
   @override
   Widget build(BuildContext context) {
-    return (widget.eventType == 'team')
+    return (widget.count > 1)
         ? TeamParticipant(
             eventName: widget.eventName,
-            // count: widget.count,
+            count: widget.count,
+            code: widget.code,
           )
         : SoloParticipant(
+            code: widget.code,
             eventName: widget.eventName,
             isFirstParticipant: false,
             isTeam: false,
-            makeNextClickedFalse: (v) {},
+            makeNextClickedFalse: (_) {},
           );
   }
 }

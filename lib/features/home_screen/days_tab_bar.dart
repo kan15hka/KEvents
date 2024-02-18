@@ -33,7 +33,6 @@ class _DaysTabBarState extends State<DaysTabBar> with TickerProviderStateMixin {
   }
 
   List<String> dayTabItem = ["DAY 1", "DAY 2", "DAY 3"];
-  String? eventType;
   //File
   String? path;
   String? _filePath; //Selected File Path
@@ -44,7 +43,6 @@ class _DaysTabBarState extends State<DaysTabBar> with TickerProviderStateMixin {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     prefs.setBool('fileSelected', true);
-    prefs.setString('eventType', eventType!);
     setState(() {
       _filePath = prefs.getString('filePath');
       isFileSelected = prefs.getBool('fileSelected')!;
@@ -64,7 +62,6 @@ class _DaysTabBarState extends State<DaysTabBar> with TickerProviderStateMixin {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('fileSelected', false);
     prefs.setString('filePath', '');
-    prefs.setString('eventType', '');
     prefs.setInt("teamNo", 0);
     prefs.setString('kid', '');
   }
@@ -72,11 +69,9 @@ class _DaysTabBarState extends State<DaysTabBar> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return (isProcessingFile)
-        ? const Padding(
-            padding: EdgeInsets.only(top: 20.0),
-            child: Text(
-              "Processing File",
-              style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.bold),
+        ? Center(
+            child: CircularProgressIndicator(
+              color: Colors.white,
             ),
           )
         : Column(
@@ -100,16 +95,6 @@ class _DaysTabBarState extends State<DaysTabBar> with TickerProviderStateMixin {
                       ),
                     );
                   }).toList()),
-              const Padding(
-                padding: EdgeInsets.all(15.0),
-                child: Text(
-                  "Select an event to proceed",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16.0,
-                  ),
-                ),
-              ),
               Expanded(
                 child: PageView(
                     controller: _pageController,
@@ -122,7 +107,7 @@ class _DaysTabBarState extends State<DaysTabBar> with TickerProviderStateMixin {
                         .map(
                           (dayEvents) => ListView(
                             //controller: _controller,
-                            padding: EdgeInsets.zero,
+                            padding: EdgeInsets.only(bottom: 25.0, top: 10.0),
                             physics: const BouncingScrollPhysics(),
                             children: events[currentIndex].map((eventMap) {
                               int eventIndex =
@@ -137,7 +122,6 @@ class _DaysTabBarState extends State<DaysTabBar> with TickerProviderStateMixin {
                                   createFolderAndCSVFile(eventMap["title"]!);
                                   setState(() {
                                     isProcessingFile = false;
-                                    eventType = eventMap["type"]!;
                                     _filePath;
                                   });
                                   // ignore: use_build_context_synchronously
@@ -145,10 +129,9 @@ class _DaysTabBarState extends State<DaysTabBar> with TickerProviderStateMixin {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => NavigationWidget(
-                                        event: eventMap["title"]!,
-                                        eventType: eventType!,
-                                        count: eventMap["count"] ?? 1,
-                                      ),
+                                          event: eventMap["title"]!,
+                                          count: eventMap["count"] ?? 1,
+                                          code: eventMap["code"] ?? ""),
                                     ),
                                   );
                                 },
@@ -157,7 +140,7 @@ class _DaysTabBarState extends State<DaysTabBar> with TickerProviderStateMixin {
                                   boxWidth:
                                       MediaQuery.of(context).size.width * 0.85,
                                   verticalBoxMargin: 15.0,
-                                  boxType: eventMap["type"]!,
+                                  boxCount: eventMap["count"] ?? 1,
                                   boxTitle: eventMap["title"]!,
                                 ),
                               );

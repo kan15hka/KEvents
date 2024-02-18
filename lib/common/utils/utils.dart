@@ -35,9 +35,9 @@ Future<Map<String, dynamic>> jwtDecryption(String token) async {
 }
 
 //check if the participant is paid or not
-bool isPaid({required String event, required Map<String, dynamic> eventList}) {
-  String normalizedEvent = event.replaceAll(' ', '');
-  bool isPaid = eventList[normalizedEvent] ?? false;
+bool isPaid(
+    {required String eventCode, required Map<String, dynamic> eventList}) {
+  bool isPaid = eventList[eventCode] ?? false;
   return isPaid;
 }
 
@@ -94,6 +94,7 @@ Future<int> writeListToCsv({
   required bool isTeam,
   required bool isFirstParticipant,
 }) async {
+  print(data);
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final openedCsvData = await readDataFromCSV();
 
@@ -128,9 +129,8 @@ Future<int> writeListToCsv({
   }
   _data.add(data);
   //add teamno and kid to local storage
-  // print("$teamNo  ${data[0]}");
-  // await prefs.setInt("teamNo", teamNo);
-  // await prefs.setString("kid", data[0]);
+
+  await prefs.setString("kid", data[1]);
 
   print("LIST: $_data");
 

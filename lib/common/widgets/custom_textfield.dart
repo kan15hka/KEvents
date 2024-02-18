@@ -17,6 +17,10 @@ class CustomTextField extends StatelessWidget {
           } else if (value.length != 8) {
             return 'K!ID is 8 character long';
           }
+          if (!value.startsWith("K24")) {
+            return "Invalid K!ID";
+          }
+
           return null;
         },
         style: const TextStyle(color: Colors.white, fontSize: 17.0),

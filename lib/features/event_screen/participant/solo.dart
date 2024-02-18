@@ -16,7 +16,7 @@ class SoloParticipant extends StatefulWidget {
   final bool isTeam;
   final bool isFirstParticipant;
   final String eventName;
-
+  final String code;
   final Function(bool) makeNextClickedFalse;
   const SoloParticipant({
     super.key,
@@ -24,6 +24,7 @@ class SoloParticipant extends StatefulWidget {
     required this.eventName,
     required this.isFirstParticipant,
     required this.makeNextClickedFalse,
+    required this.code,
   });
 
   @override
@@ -69,7 +70,7 @@ class _SoloParticipantState extends State<SoloParticipant> {
     });
   }
 
-  void showSnackBarOnWrite(int value) {
+  void showSnackBarOnWrite(int value, BuildContext context) {
     if (value == 1) {
       showBottomSnackBar(
         context: context,
@@ -102,6 +103,9 @@ class _SoloParticipantState extends State<SoloParticipant> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        const SizedBox(
+          height: 15.0,
+        ),
         textDesc('Scan the QR Code'),
         const SizedBox(
           height: 15.0,
@@ -127,7 +131,8 @@ class _SoloParticipantState extends State<SoloParticipant> {
                                       widget.isFirstParticipant);
 
                               //Fuction to show snackbar
-                              showSnackBarOnWrite(writeSuccessfull!);
+                              showSnackBarOnWrite(writeSuccessfull!, context);
+
                               //if data exists already
                               if (writeSuccessfull == -1 ||
                                   writeSuccessfull == 0) {
@@ -165,8 +170,8 @@ class _SoloParticipantState extends State<SoloParticipant> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10.0),
                         child: SizedBox(
-                          height: MediaQuery.of(context).size.width * 0.7,
-                          width: MediaQuery.of(context).size.width * 0.7,
+                          height: 250,
+                          width: 250,
                           child: QRView(
                             key: qrKey,
                             onQRViewCreated: _onQRViewCreated,
@@ -175,8 +180,7 @@ class _SoloParticipantState extends State<SoloParticipant> {
                               borderRadius: 10,
                               borderLength: 40,
                               borderWidth: 10,
-                              cutOutSize:
-                                  MediaQuery.of(context).size.width * 0.65,
+                              cutOutSize: 250,
                             ),
                           ),
                         ),
@@ -261,8 +265,8 @@ class _SoloParticipantState extends State<SoloParticipant> {
                       isTeam: widget.isTeam,
                       isFirstParticipant: widget.isFirstParticipant);
 
-                  //Fuction to show snackbar
-                  showSnackBarOnWrite(writeSuccessfull!);
+                  showSnackBarOnWrite(writeSuccessfull!, context);
+
                   //if data exists already
                   if (writeSuccessfull == -1 || writeSuccessfull == 0) {
                     return;
@@ -297,7 +301,7 @@ class _SoloParticipantState extends State<SoloParticipant> {
         Map<String, dynamic> qrText = await jwtDecryption(token);
         final paid = qrText['paid'] ?? {};
         final bool isEventPaid =
-            isPaid(event: widget.eventName, eventList: paid);
+            isPaid(eventCode: widget.code, eventList: paid);
         if (!isEventPaid) {
           await controller.pauseCamera();
 
@@ -332,7 +336,8 @@ class _SoloParticipantState extends State<SoloParticipant> {
           qrText['college'].toString(),
           qrText['cegian'].toString(),
         ];
-        if (!data.contains(temp)) data.addAll(temp);
+        data.clear();
+        data.addAll(temp);
         setState(() {
           status = isEventPaid;
         });
@@ -352,6 +357,6 @@ class _SoloParticipantState extends State<SoloParticipant> {
   void dispose() {
     controller?.dispose();
     super.dispose();
-    AnimatedSnackBar.removeAll();
+    // AnimatedSnackBar.removeAll();
   }
 }

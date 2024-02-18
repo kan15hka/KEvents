@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:kevents/common/utils/utils.dart';
 import 'package:kevents/common/widgets/bottom_snackbar.dart';
 import 'package:kevents/common/widgets/button_box.dart';
 import 'package:kevents/common/widgets/frosted_glass.dart';
 import 'package:kevents/features/event_screen/participant/solo.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TeamParticipant extends StatefulWidget {
   const TeamParticipant({
     super.key,
     required this.eventName,
-    //required this.count,
+    required this.count,
+    required this.code,
   });
   final String eventName;
-  //final int count;
+  final String code;
+  final int count;
 
   @override
   State<TeamParticipant> createState() => _TeamParticipantState();
@@ -29,18 +33,30 @@ class _TeamParticipantState extends State<TeamParticipant> {
   void initState() {
     super.initState();
     index = 1;
-    // setState(() {
-    //   count = widget.count;
-    // });
+    isNextClicked = true;
+    getTeamNo();
   }
 
   int teamNo = 0;
   String kid = "";
+
+  void getTeamNo() async {
+    final openedCsvData = await readDataFromCSV();
+
+    String teamNoStr = (openedCsvData.isEmpty)
+        ? "1"
+        : (openedCsvData[openedCsvData.length - 1][0]
+            .toString()
+            .replaceFirst("Team - ", "0"));
+    teamNo = int.tryParse(teamNoStr) ?? 0;
+    teamNo += 1;
+    setState(() {});
+    print(teamNo);
+  }
+
   Future<void> _loadPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      teamNo = prefs.getInt("teamNo") ?? 0;
-      print(teamNo);
       kid = prefs.getString("kid") ?? "";
     });
   }
@@ -73,57 +89,87 @@ class _TeamParticipantState extends State<TeamParticipant> {
         const SizedBox(
           height: 15.0,
         ),
-        //Participant box
         if (isNextClicked)
           FrostedGlass(
-            isBorderRequired: false,
-            blurValue: 4.0,
-            borderRadius: 0.0,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: Text(
-                  "Participant $index",
-                  style: const TextStyle(
-                    fontSize: 17.0,
+              isBorderRequired: false,
+              blurValue: 4.0,
+              borderRadius: 0.0,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Text(
+                    "Participant $index".toUpperCase(),
+                    style: const TextStyle(
+                      fontSize: 17.0,
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ),
-        (isNextClicked) // && count-- != 0
+              )),
+        (isNextClicked)
             ? SoloParticipant(
+                code: widget.code,
                 eventName: widget.eventName,
                 isTeam: true,
                 isFirstParticipant: isFirstParticipant,
                 makeNextClickedFalse: (bool newVal) {
+                  _loadPreferences();
                   setState(() {
                     isNextClicked = newVal;
-                    //canQuit = true;
+                    canQuit = true;
+                    print(isNextClicked);
                   });
                 },
               )
             : Center(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 30.0, vertical: 50.0),
-                  child: Column(
+                  padding: const EdgeInsets.only(top: 125.0),
+                  child: Stack(
+                    clipBehavior: Clip.none,
                     children: [
-                      Text(
-                        "$teamNo",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white.withOpacity(0.75)),
+                      GlassContainer(
+                        child: Container(
+                          width: 250.0,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10.0, vertical: 10.0),
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 60.0,
+                              ),
+                              Text(
+                                "Team :  $teamNo",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.white.withOpacity(0.75)),
+                              ),
+                              Text(
+                                "KID :  $kid",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.white.withOpacity(0.75)),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text(
+                                  "Participant $index added",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white.withOpacity(0.75)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                      Text(
-                        kid,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white.withOpacity(0.75)),
-                      ),
-                      Text(
-                        "Participant $index added successfully",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white.withOpacity(0.75)),
-                      ),
+                      Positioned(
+                        top: -125.0,
+                        child: LottieBuilder.asset(
+                          "assets/images/rocketastro.json",
+                          height: 250.0,
+                          width: 250.0,
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -188,6 +234,17 @@ class _TeamParticipantState extends State<TeamParticipant> {
   }
 
   void nextFunction() async {
+
+
+    if (index >= widget.count) {
+      showBottomSnackBar(
+        context: context,
+        title: "Maximum Limit",
+        content: "Only ${widget.count} participants can be added.",
+        status: SnackBarStatus.warning,
+      );
+      return;
+    }
     await _loadPreferences();
 
     if (isNextClicked == true) {
@@ -202,6 +259,7 @@ class _TeamParticipantState extends State<TeamParticipant> {
     }
     setState(() {
       index++;
+      
       if (index == 1) {
         isFirstParticipant = true;
       } else {
