@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:kevents/common/utils/utils.dart';
+import 'package:kevents/common/widgets/search_textfield.dart';
 import 'package:kevents/features/event_screen/search/send_file_button.dart';
 import 'package:kevents/features/event_screen/search/participant_table.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -55,7 +56,7 @@ class _ViewSearchParticipantPageState extends State<ViewSearchParticipantPage> {
       if (csvRow[index]
           .toString()
           .toLowerCase()
-          .startsWith(searchtext.toLowerCase())) {
+          .contains(searchtext.toLowerCase())) {
         setState(() {
           searchData.add(csvRow);
         });
@@ -92,17 +93,13 @@ class _ViewSearchParticipantPageState extends State<ViewSearchParticipantPage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             SizedBox(
-              height: 60.0,
-              width: MediaQuery.of(context).size.width * 0.7,
-              child: TextFormField(
-                onChanged: ((value) {
-                  searchParticipant(value);
-                }),
-                style: const TextStyle(color: Colors.white, fontSize: 17.0),
-                controller: searchController,
-                decoration: textFieldInputDecoration,
-              ),
-            ),
+                height: 60.0,
+                width: MediaQuery.of(context).size.width * 0.7,
+                child: SearchTextFormField(
+                  labelText: 'Search by K! ID',
+                  controller: searchController,
+                  onChanged: searchParticipant,
+                )),
             SendFileButton(filePath: filePath),
           ],
         ),
@@ -124,38 +121,3 @@ class _ViewSearchParticipantPageState extends State<ViewSearchParticipantPage> {
     );
   }
 }
-
-InputDecoration textFieldInputDecoration = const InputDecoration(
-  suffixIconColor: Color.fromARGB(179, 255, 255, 255),
-  suffixIcon: Padding(
-    padding: EdgeInsets.only(right: 5.0),
-    child: Icon(
-      Icons.search,
-      size: 30.0,
-    ),
-  ),
-  hintText: 'Search by K! ID',
-  hintStyle:
-      TextStyle(color: Color.fromARGB(101, 255, 255, 255), fontSize: 17.0),
-  filled: true,
-  enabledBorder: OutlineInputBorder(
-    borderSide:
-        BorderSide(width: 1.5, color: Color.fromARGB(100, 255, 255, 255)),
-    borderRadius: BorderRadius.all(
-      Radius.circular(20.0),
-    ),
-  ),
-  fillColor: Color.fromARGB(20, 255, 255, 255),
-  focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(width: 1.5, color: Colors.white),
-    borderRadius: BorderRadius.all(
-      Radius.circular(10.0),
-    ),
-  ),
-  border: OutlineInputBorder(
-    borderSide: BorderSide(width: 1.5, color: Colors.white),
-    borderRadius: BorderRadius.all(
-      Radius.circular(10.0),
-    ),
-  ),
-);

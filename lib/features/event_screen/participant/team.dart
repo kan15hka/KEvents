@@ -133,7 +133,7 @@ class _TeamParticipantState extends State<TeamParticipant> {
                               horizontal: 10.0, vertical: 10.0),
                           child: Column(
                             children: [
-                              SizedBox(
+                              const SizedBox(
                                 height: 60.0,
                               ),
                               Text(
@@ -218,24 +218,32 @@ class _TeamParticipantState extends State<TeamParticipant> {
   }
 
   void finishFunction() {
-    showBottomSnackBar(
-      context: context,
-      title: "Team Created!",
-      content:
-          "Team Participants are created successfully for the event ${capitalizeAllWord(widget.eventName)}",
-      status: SnackBarStatus.success,
-    );
-    setState(() {
-      index = 1;
-      isFirstParticipant = true;
-      canQuit = false;
-      isNextClicked = true;
-    });
+    if (index == 1) {
+      showBottomSnackBar(
+        context: context,
+        title: "Add Team Members!",
+        content:
+            "The Team has not been created for the event ${capitalizeAllWord(widget.eventName)}",
+        status: SnackBarStatus.warning,
+      );
+    } else {
+      showBottomSnackBar(
+        context: context,
+        title: "Team Created!",
+        content:
+            "Team Participants are created successfully for the event ${capitalizeAllWord(widget.eventName)}",
+        status: SnackBarStatus.success,
+      );
+      setState(() {
+        index = 1;
+        isFirstParticipant = true;
+        canQuit = false;
+        isNextClicked = true;
+      });
+    }
   }
 
   void nextFunction() async {
-
-
     if (index >= widget.count) {
       showBottomSnackBar(
         context: context,
@@ -259,7 +267,7 @@ class _TeamParticipantState extends State<TeamParticipant> {
     }
     setState(() {
       index++;
-      
+
       if (index == 1) {
         isFirstParticipant = true;
       } else {

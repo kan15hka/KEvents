@@ -7,7 +7,6 @@ import 'package:kevents/features/event_screen/navigation/btm_nav_item.dart';
 import 'package:kevents/features/event_screen/participant/add_participant_page.dart';
 import 'package:kevents/features/event_screen/search/view_search_participant_page.dart';
 import 'package:kevents/common/utils/rive_utils.dart';
-import '../../../models/csv_data.dart';
 
 class NavigationWidget extends StatefulWidget {
   final String event;
@@ -103,14 +102,14 @@ class _NavigationWidgetState extends State<NavigationWidget>
                         ],
                       ),
                       //--code to remove border
-                      border: Border.fromBorderSide(BorderSide.none),
+                      border: const Border.fromBorderSide(BorderSide.none),
                       borderRadius: BorderRadius.circular(0),
                       child: Container(
                         //color: Colors.red,
-                        constraints: BoxConstraints(minHeight: 100.0),
+                        constraints: const BoxConstraints(minHeight: 100.0),
                         child: Column(
                           children: [
-                            SizedBox(
+                            const SizedBox(
                               height: 45.0,
                             ),
                             Row(

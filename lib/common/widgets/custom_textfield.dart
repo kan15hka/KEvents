@@ -29,7 +29,7 @@ class CustomTextField extends StatelessWidget {
           prefixIcon: Container(
             height: 40.0,
             width: 40.0,
-            margin: EdgeInsets.symmetric(horizontal: 7.5, vertical: 5),
+            margin: const EdgeInsets.symmetric(horizontal: 7.5, vertical: 5),
             decoration: BoxDecoration(
                 gradient: const LinearGradient(
                     begin: Alignment.topLeft,
@@ -52,24 +52,24 @@ class CustomTextField extends StatelessWidget {
             ),
           ),
           labelText: 'Enter K!ID',
-          labelStyle: TextStyle(
+          labelStyle: const TextStyle(
               color: Color.fromARGB(101, 255, 255, 255), fontSize: 17.0),
           filled: true,
-          enabledBorder: OutlineInputBorder(
+          enabledBorder: const OutlineInputBorder(
             borderSide: BorderSide(
                 width: 1.5, color: Color.fromARGB(100, 255, 255, 255)),
             borderRadius: BorderRadius.all(
               Radius.circular(10.0),
             ),
           ),
-          fillColor: Color.fromARGB(20, 255, 255, 255),
-          focusedBorder: OutlineInputBorder(
+          fillColor: const Color.fromARGB(20, 255, 255, 255),
+          focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(width: 1.5, color: Colors.white),
             borderRadius: BorderRadius.all(
               Radius.circular(10.0),
             ),
           ),
-          border: OutlineInputBorder(
+          border: const OutlineInputBorder(
             borderSide: BorderSide(width: 1.5, color: Colors.white),
             borderRadius: BorderRadius.all(
               Radius.circular(10.0),

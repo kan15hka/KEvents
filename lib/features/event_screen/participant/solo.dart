@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:flutter/material.dart';
 import 'package:kevents/common/utils/utils.dart';

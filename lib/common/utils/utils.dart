@@ -30,13 +30,15 @@ Future<Map<String, dynamic>> jwtDecryption(String token) async {
   final jwt = JWT.verify(token, publicKey);
   String decryptedString = jwt.payload['id'];
   Map<String, dynamic> qrText = jsonDecode(decryptedString);
-  print(qrText);
   return qrText;
 }
 
 //check if the participant is paid or not
 bool isPaid(
     {required String eventCode, required Map<String, dynamic> eventList}) {
+  if (eventCode.endsWith("BULK")) {
+    eventCode = eventCode.substring(0, eventCode.length - 4);
+  }
   bool isPaid = eventList[eventCode] ?? false;
   return isPaid;
 }

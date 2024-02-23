@@ -8,6 +8,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 24, 20, 57),
       // resizeToAvoidBottomInset: false,
       body: BackgroundWidget(
         child: SafeArea(
@@ -15,16 +16,14 @@ class HomeScreen extends StatelessWidget {
             children: [
               Expanded(
                 flex: 2,
-                child: Container(
-                  child: Center(
-                    child: Text(
-                      "K! Events".toUpperCase(),
-                      style: const TextStyle(
+                child: Center(
+                  child: Text(
+                    "K! App".toUpperCase(),
+                    style: const TextStyle(
                         fontFamily: "MeteoricLight",
                         color: Color.fromARGB(255, 255, 255, 255),
-                        fontSize: 30.0,
-                      ),
-                    ),
+                        fontSize: 35.0,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

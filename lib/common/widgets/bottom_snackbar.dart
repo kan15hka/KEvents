@@ -1,7 +1,5 @@
-import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
-import 'package:kevents/common/widgets/frosted_glass.dart';
 
 enum SnackBarStatus { success, failure, warning }
 
@@ -31,7 +29,7 @@ void showBottomSnackBar({
         behavior: SnackBarBehavior.floating,
         margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.6),
         backgroundColor: Colors.transparent,
-        duration: Duration(seconds: 3),
+        duration: const Duration(seconds: 3),
         content: Align(
           alignment: Alignment.topCenter,
           child: GlassContainer(
@@ -62,7 +60,7 @@ void showBottomSnackBar({
                         horizontal: 15.0, vertical: 7.5),
                     decoration: BoxDecoration(
                         color: getStautsColor(status),
-                        borderRadius: BorderRadius.only(
+                        borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(10.0),
                             topRight: Radius.circular(10.0))),
                     child: Center(

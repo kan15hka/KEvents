@@ -12,7 +12,7 @@ class DayTab extends StatelessWidget {
         AnimatedContainer(
           duration: const Duration(milliseconds: 500),
           height: 40.0,
-          width: 80.0,
+          padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
           decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -30,13 +30,14 @@ class DayTab extends StatelessWidget {
           child: Center(
             child: Text(
               day,
-              style: const TextStyle(fontSize: 15.0, color: Colors.white),
+              style: TextStyle(
+                  fontSize: isSelected ? 18.0 : 12.0, color: Colors.white),
             ),
           ),
         ),
         AnimatedContainer(
           duration: const Duration(milliseconds: 500),
-          height: isSelected ? 20.0 : 0.0,
+          height: isSelected ? 10.0 : 0.0,
         )
       ],
     );

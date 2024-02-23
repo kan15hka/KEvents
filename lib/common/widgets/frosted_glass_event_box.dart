@@ -82,7 +82,7 @@ class FrostedGlassEventBox extends StatelessWidget {
                         fontSize: 15.0,
                       ),
                     ),
-                    SizedBox(height: 5.0),
+                    const SizedBox(height: 5.0),
                     Text(
                       "$boxCount members",
                       style: TextStyle(
